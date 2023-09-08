@@ -1,4 +1,4 @@
-﻿using BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method;
+﻿using BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.INCLUDE.SINGLE;
 using BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,32 +14,147 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.i.order
     public class order : ControllerBase
     {
 
-        private readonly IMemoryCache memoryCache;
+        private readonly IMemoryCache _memoryCache;
 
         public order(IMemoryCache memoryCache)
         {
-            this.memoryCache = memoryCache;
+            try
+            {
+                _memoryCache = memoryCache;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
         [HttpGet]
         public JsonResult GetOrder()
         {
+            try
+            {
+                CHECK ICHECK = new CHECK(_memoryCache, HttpContext);
 
-           string id = HttpContext.Request.Headers["Session-id"];
-            var item = new CHECK(memoryCache).GetCard(id);
-            return new JsonResult(item);
+                return ICHECK.HEAD(() =>
+                {
+                    string id = HttpContext.Request.Headers["Session-id"];
+                    var item = ICHECK.GetCard(id);
+                    return new JsonResult(new IResponse()
+                    {
+                        response = JsonConvert.SerializeObject(item)
+                    });
+                });
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
         }
 
         [HttpPost]
-        public string PostOrder([FromBody]NewOrder? order)
+        public JsonResult PostOrder([FromBody] NewOrder? order)
         {
-            //var request = HttpContext.Request;
-            //var req = request.BodyReader.ToString();
+            try
+            {
+                CHECK ICHECK = new CHECK(_memoryCache, HttpContext);
 
-            // NEWORDER.NEW(order.sessionOrder);
 
-            new CHECK(memoryCache).AddMoreCard(order);
+                return ICHECK.HEAD(() =>
+                {
+                    ICHECK.AddMoreCard(order);
+                    return IRESPONSE.DEFAULT_RESPONSE;
+                });
+            }
+            catch (Exception)
+            {
 
-            return "item";
+                throw;
+            }
+
+        }
+
+        [HttpPost]
+        public JsonResult DeleteOrder([FromBody] OrderDelete odl)
+        {
+            try
+            {
+                CHECK ICHECK = new CHECK(_memoryCache, HttpContext);
+
+                return ICHECK.HEAD(() =>
+                {
+                    ICHECK.DeleteCard(odl);
+                    return IRESPONSE.DEFAULT_RESPONSE;
+                });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+        [HttpPost]
+        public JsonResult AddOrder([FromBody] AddOrder order)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    CHECK ICHECK = new CHECK(_memoryCache, HttpContext);
+
+                    return ICHECK.HEAD(() =>
+                    {
+
+
+                        var dicOrderls = new List<Dictionary<string, object>>();
+
+                        foreach (var item in order.orderls)
+                        {
+                            dicOrderls.Add(new Dictionary<string, object>() { { "number", item.number }, { "msp", item.msp } });
+                        }
+
+                        var dic = new Dictionary<string, object>()
+                        {
+                            {"name", order.name},
+                            {"orderls", dicOrderls},
+                            {"phoneNumber", order.phoneNumber},
+                            {"address", order.address},
+                        };
+
+                        var db = FIRESTORE_METHOD.ORDER_ADDED_COLLECTION().AddAsync(dic).Result;
+
+                        if (db != null)
+                        {
+                            return IRESPONSE.DEFAULT_RESPONSE;
+
+                        }
+                        else
+                        {
+                            return IRESPONSE.BAD_RESPONSE;
+
+                        }
+
+                    });
+
+
+                }
+                else
+                {
+                    return IRESPONSE.BAD_RESPONSE;
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 

@@ -1,12 +1,11 @@
-﻿using BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method;
-using BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.model;
+﻿using BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.model;
 using Google.Cloud.Firestore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Text;
 
-namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
+namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.INCLUDE.SINGLE
 {
-    public static  class BANBANH_METHOD
+    public static class BANBANH_METHOD
     {
         private static readonly string subLinkName = "";
         public static string KhongDau(string vanBan)
@@ -35,7 +34,7 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
                     sN = sN.Replace(item, '-');
                 }
                 sN = LooperCheckCase(sN);
-                return (sN.Normalize(NormalizationForm.FormD).ToLower());
+                return sN.Normalize(NormalizationForm.FormD).ToLower();
             }
             catch (Exception)
             {
@@ -46,7 +45,7 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
 
         }
 
-        private static  string LooperCheckCase(string text)
+        private static string LooperCheckCase(string text)
         {
             string[] noCase = { "-----", "----", "---", "-–-", "--" };
             for (int i = 0; i < noCase.Length; i++)
@@ -75,7 +74,7 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
             return text;
         }
 
-        public static  string URLSanPham(string ten, string msp)
+        public static string URLSanPham(string ten, string msp)
         {
             try
             {

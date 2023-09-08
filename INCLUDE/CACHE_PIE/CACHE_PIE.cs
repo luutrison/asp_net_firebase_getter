@@ -8,45 +8,20 @@ using System.IO.Pipes;
  * **/
 
 
-namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
+namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.INCLUDE.CACHE_PIE
 {
     /**
      * Các Model Của ICachePiece
      * 
      * **/
 
-    public class ICachePieObject<T>
-    {
-        public string timestamp { get; set; }
-        public T pieObject { get; set; }
-
-    }
-
-    public class ICachePieSetting
-    {
-        public string iCachePieName { get; set; }
-    }
-
-    public class ICachePieStatus
-    {
-        public bool isChange { get; set; }
-        public string name { get; set; }
-        public string timestampUpdate { get; set; }
-        public string timestampCreate { get; set; }
-    }
-
-    public class ICachePieOption
-    {
-        public IMemoryCache MemoryCache { get; set; }
-        public ICachePieSetting Setting { get; set; }
-
-    }
+  
 
 
-    public class ICachePie
+    public class CACHE_PIE
     {
         private readonly ICachePieOption _option;
-        public ICachePie(ICachePieOption option)
+        public CACHE_PIE(ICachePieOption option)
         {
             _option = option;
         }
@@ -99,7 +74,7 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
             {
                 return isNull;
             }
-           
+
         }
 
         public void SetICachePieStatus(ICachePieStatus cachePieStatus)
@@ -107,14 +82,14 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
             try
             {
 
-                var listStatus = (List<ICachePieStatus>)GetICachePieStatus();
-             
+                var listStatus = GetICachePieStatus();
+
                 var status = listStatus.Where(x => x.name == cachePieStatus.name).FirstOrDefault();
 
 
                 if (isNull(status))
                 {
-                     listStatus.Add(cachePieStatus);
+                    listStatus.Add(cachePieStatus);
                 }
                 else
                 {

@@ -1,23 +1,32 @@
-﻿
-
-using BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method;
+﻿using BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.INCLUDE.CACHE_PIE;
+using BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.INCLUDE.VTO;
 using BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.model;
 using Google.Cloud.Firestore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
-namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
+namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.INCLUDE.SINGLE
 {
 
     public class CHECK
     {
         private readonly IMemoryCache _memoryCache;
 
+        private readonly HttpContext _context;
+
         private readonly ICachePieOption _iPieOption;
-        private readonly ICachePie _iCachePie;
-        public CHECK(IMemoryCache cache)
+        private readonly CACHE_PIE.CACHE_PIE _iCachePie;
+
+
+
+
+
+        public CHECK(IMemoryCache cache, HttpContext context)
         {
             _memoryCache = cache;
+            _context = context;
 
             _iPieOption = new ICachePieOption()
             {
@@ -26,7 +35,25 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
 
             };
 
-            _iCachePie = new ICachePie(_iPieOption);
+            _iCachePie = new CACHE_PIE.CACHE_PIE(_iPieOption);
+            _context = context;
+        }
+
+
+
+        public JsonResult HEAD(Func<JsonResult> func)
+        {
+
+            VTO_CHECKED CHECKED = VTO.VTO.CHECK(new List<VTOSTATUS>(), _context);
+
+            if (!CHECKED.isGood)
+            {
+                return new JsonResult(new IResponse() { check = CHECKED });
+            }
+            else
+            {
+                return func();
+            }
         }
 
         public static SessionCard ParseOrderSession(DocumentSnapshot snap)
@@ -70,6 +97,8 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
 
             return true;
         }
+
+
 
         //public List<SessionOrder> GetSessionOrder(string sessionId)
         //{
@@ -223,7 +252,7 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
                     _iCachePie.SetICachePieStatus(new ICachePieStatus()
                     {
                         isChange = true,
-                        name = CACHEKEY.CACHE_STATUS_SESSION+ order.sessionCard.sessionId,
+                        name = CACHEKEY.CACHE_STATUS_SESSION + order.sessionCard.sessionId,
                         timestampCreate = time,
                         timestampUpdate = time
                     });
@@ -234,6 +263,7 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
 
                 /**
                  * Trùng đơn hàng thì tăng số lượng
+                 * Nếu không trùng đơn hàng thì tăng thêm sản phẩm trong list
                  * **/
 
 
@@ -245,15 +275,17 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
 
                     if (itemMSP != null && cache.pieObject.sessionId == order.sessionCard.sessionId)
                     {
-                        itemMSP.number += order.sessionOrder.number;
+                        itemMSP.number = order.sessionOrder.number;
                     }
                     else
                     {
                         cache.pieObject.listOrder.Add(order.sessionOrder);
                     }
+
+                    _memoryCache.Set(name, cache);
+
                 }
 
-                _memoryCache.Set(name, cache);
 
             }
             catch (Exception)
@@ -264,11 +296,38 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
 
         }
 
-       /**
-        * Lấy thông tin toàn bộ sản phẩm đã được order
-        * 
-        **/
-       
+        /**
+         * Lấy thông tin toàn bộ sản phẩm đã được order
+         * 
+         **/
+
+
+        /***
+         * Xóa thông tin đơn hàng mà người dùng không muốn đặt
+         * **/
+
+        public void DeleteCard(OrderDelete delete)
+        {
+
+            try
+            {
+                var name = CACHEKEY.CACHE_INFO_TEMP_ORDER + delete.sessionId;
+
+                var card = GetCard(delete.sessionId);
+
+                var di = card.pieObject.listOrder.Where(x => x.msp == delete.msp).FirstOrDefault();
+
+                card.pieObject.listOrder.Remove(di);
+
+                _memoryCache.Set(name, card);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public ICachePieObject<PieOrder> GetCard(string sessionId)
         {
             try

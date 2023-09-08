@@ -1,7 +1,7 @@
 ﻿using BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.model;
 using Google.Cloud.Firestore;
 
-namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
+namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.INCLUDE.SINGLE
 {
     public static class USE_ENVIROMENT
     {
@@ -17,6 +17,12 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.method
         public static CollectionReference ORDER_SESSION_COLLECTION()
         {
             var db = FirestoreDb.Create(SETTING.FIRESTORE_PROJECT_ID).Collection(FIRESTORE_VARIBALE.FC_ORDER_NC);
+            return db;
+        }
+
+        public static CollectionReference ORDER_ADDED_COLLECTION()
+        {
+            var db = FirestoreDb.Create(SETTING.FIRESTORE_PROJECT_ID).Collection(FIRESTORE_VARIBALE.BAN_BANH_ORDER);
             return db;
         }
 
