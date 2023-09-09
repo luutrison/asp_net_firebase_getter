@@ -100,64 +100,6 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.INCLUDE.SINGLE
 
 
 
-        //public List<SessionOrder> GetSessionOrder(string sessionId)
-        //{
-        //    try
-        //    {
-        //        var collection = FIRESTORE_METHOD.ORDER_SESSION_COLLECTION()
-        //            .Document(FIRESTORE_VARIBALE.FD_SESSION_UO).Collection(FIRESTORE_VARIBALE.FC_ORDER)
-        //            .WhereEqualTo(FIRESTORE_VARIBALE.FF_USER_SESSION_ID, sessionId).GetSnapshotAsync();
-
-
-        //        var listItem = new FirestoreParse().ListSessionOrder(collection).Result;
-        //        return listItem;
-
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        throw;
-        //    }
-        //}
-
-        //public SessionCard GetSessionCard(string sessionId)
-        //{
-        //    var collection = FIRESTORE_METHOD.ORDER_SESSION_COLLECTION()
-        //        .Document(FIRESTORE_VARIBALE.FD_SESSION_UO).Collection(FIRESTORE_VARIBALE.FC_USER)
-        //        .WhereEqualTo(FIRESTORE_VARIBALE.FF_USER_SESSION_ID, sessionId).Limit(1).GetSnapshotAsync();
-
-        //    var listItem = new FirestoreParse().ListSessionCard(collection).Result;
-
-        //    return listItem.FirstOrDefault();
-
-        //}
-
-        //public ListOrder GetOrderList(string sessionId)
-        //{
-        //    try
-        //    {
-        //        var sessionCard = GetSessionCard(sessionId);
-        //        var listOrder = GetSessionOrder(sessionId);
-
-        //        var listOder = new ListOrder()
-        //        {
-        //            sessionCard = sessionCard,
-        //            ListSessionOrder = listOrder
-        //        };
-
-        //        return listOder;
-
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        throw;
-        //    }
-        //}
-
-
-
-
 
         /**
          * INPUT là danh sách các (key-name) của SessionCard - SessionId
@@ -167,59 +109,6 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.INCLUDE.SINGLE
          * Định dạng item: name - bool
          * **/
 
-        // Dùng để check xem là đã có ở trong cache chưa
-        //private void CheckChange(NewOrder order)
-        //{
-        //    try
-        //    {
-
-
-
-
-        //        var cache = _memoryCache.GetOrCreate(CACHEKEY.CHECK_STEP_ONE, entrie =>
-        //        {
-        //            var item = new ListItemCheck()
-        //            {
-        //                item = new List<ItemCheck>() {
-        //                 new ItemCheck()
-        //                 {
-        //                     id = order.sessionCard.sessionId,
-        //                     timeOut = Convert.ToInt32(TimeSpan.FromHours(SETTING.DEFAULT_TIME_OUT_TO_DELETE_RECORD_ON_FIRESTORE).TotalSeconds)
-        //                 }
-        //                },
-        //                timestamp = BANBANH_METHOD.TimeStamp()
-        //            };
-        //            entrie.SetValue(item);
-        //            return item;
-        //        });
-
-        //        var currentTime = BANBANH_METHOD.TimeStamp();
-
-        //        var listItemCheck = cache.item;
-
-        //        foreach (var item in cache.item)
-        //        {
-        //            if (currentTime - item.timeOut > SETTING.DEFAULT_TIME_OUT_TO_DELETE_RECORD_ON_FIRESTORE)
-        //            {
-        //                var collection = FIRESTORE_METHOD.ORDER_SESSION_COLLECTION().Document(FIRESTORE_VARIBALE.FD_SESSION_UO).Collection(FIRESTORE_VARIBALE.FC_ORDER)
-        //                                 .WhereLessThanOrEqualTo(FIRESTORE_VARIBALE.FF_ADD_CARD_TIMESTAMP, currentTime)
-        //                                 .Select(new string[] { FIRESTORE_VARIBALE.FF_SESSION_ID }).GetSnapshotAsync();
-
-        //                var delete = DeleteTimeOutCard(collection).Result;
-
-
-        //                listItemCheck = listItemCheck.RemoveAll(x => x.id == item.id) as dynamic;
-
-        //                _memoryCache.Remove(CACHEKEY.CACHE_CHECK_ITEM + order.sessionCard.sessionId);
-        //            }
-        //        }
-        //        cache.item = listItemCheck;
-
-        //        _memoryCache.Set(CACHEKEY.CHECK_STEP_ONE, cache);
-
-        //    }
-        //    catch (Exception ex) { }
-        //}
 
 
         /**
@@ -349,44 +238,6 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.INCLUDE.SINGLE
          * Thay đổi được thực hiện định kì khi có lượt truy cập ở trong khoảng thời gian đặt trước. 
          **/
 
-        //    public Task<bool> CARD()
-        //    {
-
-
-
-        //        var checkedCard = _memoryCache.GetOrCreate(CACHEKEY.CHECK_CARD, enchie =>
-        //        {
-        //            try
-        //            {
-
-
-
-
-        //                //enchie.SetValue(true);
-        //                //enchie.SetAbsoluteExpiration(TimeSpan.FromSeconds(5));
-
-        //                //var current = BANBANH_METHOD.TimeStamp();
-        //                //var after = Convert.ToInt32(TimeSpan.FromHours(5).TotalSeconds);
-        //                //current = current - after;
-
-        //                //var collection = FIRESTORE_METHOD.ORDER_SESSION_COLLECTION().Document(FIRESTORE_VARIBALE.FD_SESSION_UO).Collection(FIRESTORE_VARIBALE.FC_ORDER)
-        //                //.WhereLessThanOrEqualTo(FIRESTORE_VARIBALE.FF_ADD_CARD_TIMESTAMP, current)
-        //                //.Select(new string[] { FIRESTORE_VARIBALE.FF_SESSION_ID }).GetSnapshotAsync();
-
-        //                //return DeleteTimeOutCard(collection).Result;
-        //            }
-        //            catch (Exception err)
-        //            {
-        //                BANBANH_METHOD.LogsError(err.ToString());
-        //                throw;
-        //            }
-
-        //        });
-        //        return Task.FromResult(checkedCard);
-        //    }
-
-
-        //}
 
         public static class CONVERTER
         {
@@ -420,64 +271,7 @@ namespace BANBANH_ORDER_BUT_NOT_BUY_SINGLE_RUN.INCLUDE.SINGLE
             }
         }
 
-        //public static class NEWORDER
-        //{
-        //    public static void NEW(SessionOrder sessionOrder)
-        //    {
-        //        try
-        //        {
-        //            var db = FIRESTORE_METHOD.SESSION_USER_ORDER().Collection(FIRESTORE_VARIBALE.FC_ORDER);
-
-        //            var dc = CONVERTER.CONVER_DISIONARY(new List<SessionOrder>() { sessionOrder });
-
-
-        //            foreach (var item in dc)
-        //            {
-        //                //Check order before add
-        //                CheckItem(item);
-        //            }
-
-
-
-        //        }
-        //        catch (Exception)
-        //        {
-
-        //            throw;
-        //        }
-        //    }
-
-
-        //    private static void CheckItem(Dictionary<string, dynamic> item)
-        //    {
-        //        try
-        //        {
-        //            var prop = new SessionOrder();
-        //            var msp = item[nameof(prop.msp)] as string;
-        //            var sessionId = item[nameof(prop.sessionId)] as string;
-        //            var db = FIRESTORE_METHOD.SESSION_USER_ORDER().Collection(FIRESTORE_VARIBALE.FC_ORDER);
-
-
-        //            var mathItem = db.Where(Filter.EqualTo(FIRESTORE_VARIBALE.FF_ORDER_MSP, msp)).Where(Filter.And(Filter.EqualTo(FIRESTORE_VARIBALE.FF_SESSION_ID, sessionId))).GetSnapshotAsync();
-
-
-        //            if (mathItem.Result == null)
-        //            {
-        //                var added = db.AddAsync(item).Result;
-        //            }
-        //            else
-        //            {
-
-        //            }
-        //        }
-        //        catch (Exception)
-        //        {
-
-        //            throw;
-        //        }
-
-        //    }
-        //}
+      
 
     }
 }
